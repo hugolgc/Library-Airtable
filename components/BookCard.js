@@ -4,7 +4,8 @@ export default function BookCard({ book }) {
   console.log(book)
   return (
     <figure>
-      <Link href='/'>
+
+      { book.fields.Cover.length ? <Link href='/'>
         <a>
           <img
             src={ book.fields.Cover[0].thumbnails.large.url }
@@ -12,7 +13,8 @@ export default function BookCard({ book }) {
             className='w-full rounded-xl aspect-2/3 object-cover'
           />
         </a>
-      </Link>
+      </Link> : '' }
+      
       <figcaption className='mt-2 space-y-1'>
         <h3 className='text-lg'>{ book.fields.Titre }</h3>
         <h4 className='text-xs text-black/50'>John Duckett</h4>
