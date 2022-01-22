@@ -34,8 +34,6 @@ export default function Home({ JSONBooks, JSONAuthors, JSONEditors }) {
     })
   }
 
-  console.log(books)
-
   function getBooks() {
     return books.filter(book => {
       if (category == 0) return book.fields.Titre.toLowerCase().includes(search.toLowerCase())
@@ -76,8 +74,6 @@ export default function Home({ JSONBooks, JSONAuthors, JSONEditors }) {
   }
 
   initCategories()
-
-  console.log(categories)
 
   return (
     <>
@@ -146,6 +142,7 @@ export default function Home({ JSONBooks, JSONAuthors, JSONEditors }) {
                 }
               `}>{ name }</p>
             </li> )}
+            
           </ul>
         </aside>
         <main className='flex-auto'>
