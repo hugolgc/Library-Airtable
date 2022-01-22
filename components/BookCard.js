@@ -1,7 +1,6 @@
 import Link from 'next/link'
 
 export default function BookCard({ book, author, editor }) {
-  console.log(book)
   return (
     <figure>
 
