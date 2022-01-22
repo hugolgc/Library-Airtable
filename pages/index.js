@@ -6,25 +6,78 @@ import { useState } from 'react'
 
 export async function getStaticProps() {
   const JSONBooks = JSON.stringify(await database('Books').select().all())
-
+  const JSONAuthors = JSON.stringify(await database('Authors').select().all())
+  const JSONEditors = JSON.stringify(await database('Editors').select().all())
+  
   return {
-    props: {
-      JSONBooks
-    }
+    props: { JSONBooks, JSONAuthors, JSONEditors }
   }
 }
 
-export default function Home({ JSONBooks }) {
-  const step = 25
+export default function Home({ JSONBooks, JSONAuthors, JSONEditors }) {
+  let step = 15
+  let categories = []
   const books = JSON.parse(JSONBooks)
-  const [max, setMax] = useState(step)
-  const [search, setSearch] = useState('')
-
-  const getBooks = () => books.filter(
-    book => book.fields.Titre.toLowerCase().includes(search.toLowerCase())
-  ).slice(0, max)
+  const authors = JSON.parse(JSONAuthors)
+  const editors = JSON.parse(JSONEditors)
   
+  const [page, setPage] = useState(0)
+  const [search, setSearch] = useState('')
+  const [category, setCategory] = useState(0)
+
+  function initCategories() {
+    categories.push('Nos Livres')
+    books.forEach(book => {
+      book.fields.Topic.forEach(topic => {
+        if (!categories.includes(topic)) categories.push(topic)
+      })
+    })
+  }
+
   console.log(books)
+
+  function getBooks() {
+    return books.filter(book => {
+      if (category == 0) return book.fields.Titre.toLowerCase().includes(search.toLowerCase())
+      return book.fields.Titre.toLowerCase().includes(search.toLowerCase())
+      && book.fields.Topic.includes(categories[category])
+    })
+  }
+
+  function getAuthor(id) {
+    return authors.find(author => author.id == id) || null
+  }
+
+  function getEditor(id) {
+    return editors.find(editor => editor.id == id) || null
+  }
+
+  function getPagination() {
+    let items = []
+    for (
+      let index = 0;
+      index < (Math.floor(getBooks().length / step) + (getBooks().length % step ? 1 : 0));
+      index++
+    ) { items.push(
+      <li
+        key={ index }
+        onClick={ () => setPage(index) }
+        className={`
+          h-11 w-11 flex justify-center items-center rounded-full cursor-pointer
+          ${
+            index == page
+            ? 'bg-green-light text-green'
+            : 'duration-150 hover:bg-gray-light/25'
+          }`
+        }>{ index + 1 }</li>
+      )
+    }
+    return items
+  }
+
+  initCategories()
+
+  console.log(categories)
 
   return (
     <>
@@ -33,9 +86,11 @@ export default function Home({ JSONBooks }) {
         <meta name='description' content='Magasin de livre BookBox créé par Luca Di Rosso, Lucas Thirion & Hugo Lagache.' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <header className='py-6 border-b border-green-light'>
+
+
+      <header className='sticky top-0 mb-8.5 py-6 bg-white border-b border-green-light'>
         <h1 className='sr-only'>BookBox | Créé par Di Rosso - Thirion - Lagache</h1>
-        <nav className='max-w-screen-xl mx-auto px-4 flex justify-between items-center'>
+        <nav className='max-w-base mx-auto px-4 flex items-center justify-between'>
           <Link href='/'>
             <a>
               <span className='sr-only'>Accueil</span>
@@ -46,72 +101,81 @@ export default function Home({ JSONBooks }) {
               />
             </a>
           </Link>
-          <label className='relative block'>
+          <label className='block relative'>
             <span className='sr-only'>Chercher un livre par auteur ou par titre</span>
-            <span className='absolute inset-y-0 left-0 flex items-center pl-5 text-black/30'>
+            <span className='absolute inset-y-0 left-0 flex items-center pl-6 text-gray-dark'>
               <svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                 <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' />
               </svg>
             </span>
             <input
+              onChange={ ({ target }) => {
+                setPage(0)
+                setSearch(target.value)
+              }}
               type='text'
-              maxLength='40'
-              placeholder='Chercher par Titre ou Auteur'
-              className='w-96 pl-12 pr-6 py-2 border border-gray-light rounded-full placeholder:text-black/30'
+              maxLength='64'
+              placeholder='Recherche par titre ou auteur'
+              className='h-11 w-search pl-14 pr-4 border border-gray-light rounded-full text-green-dark placeholder:text-gray-dark'
             />
           </label>
           <a
             href='https://github.com/hugolgc'
             target='_blank'
             rel='noreferrer'
-            className='px-4 py-2 space-x-3 flex items-center bg-green rounded-full text-white'
-          >
-            <span>
-              <svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1' />
-              </svg>
-            </span>
-            <span>Github</span>
-          </a>
+            className='px-4 py-2 bg-green rounded-full text-white font-medium'
+          >Github</a>
         </nav>
       </header>
-      <div className='max-w-screen-xl mx-auto px-4 py-8 space-x-16 flex'>
-        <aside className='w-36 flex-none text-black/50 text-center'>
-          <ul className='space-y-4'>
-            <li>
-              <Link href='/'>
-                <a className='block p-4 bg-green-light rounded-2xl text-green'>Ajouts récents</a>
-              </Link>
-            </li>
-            <li>
-              <Link href='/'>
-                <a className='block p-4'>Catégorie</a>
-              </Link>
-            </li>            
+
+
+      <div className='max-w-base mx-auto px-4 flex'>
+        <aside className='w-36 flex-none mr-18'>
+          <h2 className='sr-only'>Liste des catégories</h2>
+          <ul className='space-y-8'>
+            
+            { categories.map((name, index) => <li key={ index }>
+              <p
+                onClick={ () => setCategory(index) }
+                className={`
+                h-16 px-4 flex justify-center items-center rounded-2xl text-center cursor-pointer duration-150
+                ${
+                  index == category
+                  ? 'bg-green-light text-green'
+                  : 'text-gray-dark hover:bg-gray-light/25'
+                }
+              `}>{ name }</p>
+            </li> )}
           </ul>
         </aside>
-        <main className='flex-auto text-green-dark'>
+        <main className='flex-auto'>
           <h2 className='sr-only'>Liste des livres</h2>
           <form method='post'></form>
-          <ul className='grid grid-cols-5 gap-8'>
-            
-          { getBooks().map(book => <li key={ book.id }><BookCard book={ book } /></li> )}
+          <ul className='grid grid-cols-5 gap-8.5'>
+
+          { getBooks().slice(page * step, (page + 1) * step).map(
+            book => book.fields.Cover ? <li key={ book.id }>
+              <BookCard
+                book={ book }
+                author={ getAuthor(book.fields['Auteur(s)'] ? book.fields['Auteur(s)'][0] : null) }
+                editor={ getEditor(book.fields.Editeur) }
+              />
+            </li> : ''
+          )}
 
           </ul>
 
-          { max < books.length ?
-            <div className='flex mt-16'>
-              <button
-                onClick={ () => setMax(max + step) }
-                className='w-36 mx-auto p-4 bg-green-light rounded-2xl text-green'
-              >Voir plus</button>
-            </div> : '' }
+          { getBooks().length > step ?
+            <ul className='mt-10 flex justify-center items-center space-x-1 text-green-dark'>
+              { getPagination() }
+            </ul> : ''
+          }
 
         </main>
       </div>
-      <footer>
 
-      </footer>
+
+      <footer></footer>
     </>
   )
 }

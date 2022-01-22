@@ -16,8 +16,18 @@ module.exports = {
           light: '#ebf1e9'
         }
       },
+      spacing: {
+        '8.5': '34px',
+        '18': '72px',
+      },
+      width: {
+        search: '398px'
+      },
+      maxWidth: {
+        base: '1294px'
+      },
       aspectRatio: {
-        '2/3': '16 / 20'
+        'cover': '91/125'
       }
     }
   },
