@@ -116,7 +116,7 @@ export default function Home({ JSONBooks, JSONAuthors, JSONEditors }) {
             />
           </label>
           <a
-            href='https://github.com/hugolgc'
+            href='https://github.com/hugolgc/library-airtable'
             target='_blank'
             rel='noreferrer'
             className='px-4 py-2 bg-green rounded-full text-white font-medium'
@@ -142,7 +142,7 @@ export default function Home({ JSONBooks, JSONAuthors, JSONEditors }) {
                 }
               `}>{ name }</p>
             </li> )}
-            
+
           </ul>
         </aside>
         <main className='flex-auto'>
