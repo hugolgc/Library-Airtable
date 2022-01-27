@@ -148,7 +148,7 @@ export default function Home({ JSONBooks, JSONAuthors, JSONEditors }) {
         <main className='flex-auto'>
           <h2 className='sr-only'>Liste des livres</h2>
           <form method='post'></form>
-          <ul className='grid grid-cols-5 gap-8.5'>
+          <ul className='grid grid-cols-5 gap-8.5 pb-10'>
 
           { getBooks().slice(page * step, (page + 1) * step).map(
             book => book.fields.Cover ? <li key={ book.id }>
@@ -163,7 +163,7 @@ export default function Home({ JSONBooks, JSONAuthors, JSONEditors }) {
           </ul>
 
           { getBooks().length > step ?
-            <ul className='mt-10 flex justify-center items-center space-x-1 text-green-dark'>
+            <ul className='pb-10 flex justify-center items-center space-x-1 text-green-dark'>
               { getPagination() }
             </ul> : ''
           }
