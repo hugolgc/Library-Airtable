@@ -4,9 +4,13 @@ import { useState } from 'react'
 import { database } from '../../services/airtable'
 
 export async function getStaticPaths() {
+  const books = await database('Books').select().all()
+
   return {
-    paths: [{ params: { id: '' } }],
-    fallback: true,
+    fallback: false,
+    paths: books.map(book => ({
+      params: { id: book.id }
+    }))
   }
 }
 
