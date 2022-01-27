@@ -93,7 +93,7 @@ export default function Book({ JSONBook, JSONAuthor, JSONEditor }) {
               />
             )}
           </div> : '' }
-          
+
           <div className='flex-1'>
             <img
               src={ picture }
@@ -139,7 +139,7 @@ export default function Book({ JSONBook, JSONAuthor, JSONEditor }) {
           {/* <p className='mt-2 text-green'>Voir plus</p> */}
           <ul className='mt-8 space-y-4'>
             { author ? <li className='flex space-x-4'>
-              <span className='text-gray-dark'>Author</span>
+              <span className='text-gray-dark'>Auteur</span>
               <span className='h-3.5 flex-auto border-b border-gray'></span>
               <span className='text-green-dark'>{ author.fields.Name }</span>
             </li> : '' }
