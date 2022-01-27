@@ -24,7 +24,7 @@ export default function Home({ JSONBooks, JSONAuthors, JSONEditors }) {
   const [page, setPage] = useState(0)
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState(0)
-
+  
   function initCategories() {
     categories.push('Nos Livres')
     books.forEach(book => {

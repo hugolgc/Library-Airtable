@@ -17,8 +17,8 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const book = await database('Books').find(params.id)
   const JSONBook = JSON.stringify(book)
-  const JSONAuthor = JSON.stringify(await database('Authors').find(book.fields['Auteur(s)'][0]))
-  const JSONEditor = JSON.stringify(await database('Editors').find(book.fields['Editeur'][0]))
+  const JSONAuthor = JSON.stringify(book.fields['Auteur(s)'] ? await database('Authors').find(book.fields['Auteur(s)'][0]) : null)
+  const JSONEditor = JSON.stringify(book.fields['Editeur'] ? await database('Editors').find(book.fields['Editeur'][0]) : null)
 
   return {
     props: { JSONBook, JSONAuthor, JSONEditor }
@@ -30,12 +30,12 @@ export default function Book({ JSONBook, JSONAuthor, JSONEditor }) {
   const author = JSON.parse(JSONAuthor)
   const editor = JSON.parse(JSONEditor)
 
-  const [picture, setPicture] = useState(book.fields.Cover[0].url)
+  const [picture, setPicture] = useState(book.fields.Cover ? book.fields.Cover[0].url : null)
 
   return (
     <>
       <Head>
-        <title>BookBox | { book.fields.Titre } de { author.fields.Name }</title>
+        <title>BookBox | { book.fields.Titre } { author ? ('de ' + author.fields.Name) : '' }</title>
         <meta name='description' content='Magasin de livre BookBox créé par Luca Di Rosso, Lucas Thirion & Hugo Lagache.' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
@@ -80,8 +80,9 @@ export default function Book({ JSONBook, JSONAuthor, JSONEditor }) {
 
       <article className='max-w-base mx-auto px-4'>
         <div className='flex space-x-8'>
-          <div className='w-20 flex-none space-y-5'>
 
+          { book.fields.Cover ?
+          <div className='w-20 flex-none space-y-5'>
             { book.fields.Cover.map(cover =>
               <img
                 key={ cover.id }
@@ -91,8 +92,8 @@ export default function Book({ JSONBook, JSONAuthor, JSONEditor }) {
                 onClick={ () => setPicture(cover.url) }
               />
             )}
-
-          </div>
+          </div> : '' }
+          
           <div className='flex-1'>
             <img
               src={ picture }
@@ -103,20 +104,20 @@ export default function Book({ JSONBook, JSONAuthor, JSONEditor }) {
           <div className='flex-1 text-green-dark'>
             <div>
               <h2 className='text-green-dark text-3xl font-medium'>{ book.fields.Titre }</h2>
-              <h3 className='mt-2.5 text-gray-dark text-xl'>de { author.fields.Name }</h3>
+              { author ? <h3 className='mt-2.5 text-gray-dark text-xl'>de { author.fields.Name }</h3> : '' }
               {/* <h3 className=''>$10.00</h3> */}
               <a href={ book.fields['Où le trouver'] } target="_blank" rel="noopener noreferrer" className='block w-full max-w-xs mt-12 p-3.5 bg-green text-center text-white text-lg font-medium rounded-full'>Trouver</a>
             </div>
             <div className='mt-10 text-green'>
               <h4 className='text-green-dark text-xl font-medium'>{ book.fields.Topic.map((topic ,index) => (index != 0 ? ', ' : '') + topic) }</h4>
-              <p className='mt-1 space-x-2 flex items-center'>
+              { editor ? <p className='mt-1 space-x-2 flex items-center'>
                 <span>
                   <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                     <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' />
                   </svg>
                 </span>
                 <span className='text-lg'>{ editor.fields.Name }</span>
-              </p>
+              </p> : '' }
               <p className='my-4 space-x-0.5 flex text-yellow-400'>
 
                 { Array.from(Array(book.fields.Note).keys()).map(index =>
@@ -128,7 +129,7 @@ export default function Book({ JSONBook, JSONAuthor, JSONEditor }) {
                 )}
                 
               </p>
-              <p>Autres livres: { author.fields.Books.length - 1 }</p>
+              { author ? <p>Autres livres: { author.fields.Books.length - 1 }</p> : '' }
             </div>
           </div>
         </div>
@@ -137,26 +138,26 @@ export default function Book({ JSONBook, JSONAuthor, JSONEditor }) {
           <p className='mt-4 text-gray-dark'>{ book.fields['Personal Notes'] }</p>
           {/* <p className='mt-2 text-green'>Voir plus</p> */}
           <ul className='mt-8 space-y-4'>
-            <li className='flex space-x-4'>
+            { author ? <li className='flex space-x-4'>
               <span className='text-gray-dark'>Author</span>
               <span className='h-3.5 flex-auto border-b border-gray'></span>
               <span className='text-green-dark'>{ author.fields.Name }</span>
-            </li>
+            </li> : '' }
             <li className='flex space-x-4'>
               <span className='text-gray-dark'>Genres</span>
               <span className='h-3.5 flex-auto border-b border-gray'></span>
               <span className='text-green-dark'>{ book.fields.Topic.map((topic ,index) => (index != 0 ? ', ' : '') + topic) }</span>
             </li>
-            <li className='flex space-x-4'>
+            { editor ? <li className='flex space-x-4'>
               <span className='text-gray-dark'>Éditeur</span>
               <span className='h-3.5 flex-auto border-b border-gray'></span>
               <span className='text-green-dark'>{ editor.fields.Name }</span>
-            </li>
-            <li className='flex space-x-4'>
+            </li> : '' }
+            { book.fields.Statut ? <li className='flex space-x-4'>
               <span className='text-gray-dark'>Statut</span>
               <span className='h-3.5 flex-auto border-b border-gray'></span>
               <span className='text-green-dark'>{ book.fields.Statut[0] }</span>
-            </li>
+            </li> : '' }
             <li className='flex space-x-4'>
               <span className='text-gray-dark'>Papier</span>
               <span className='h-3.5 flex-auto border-b border-gray'></span>
