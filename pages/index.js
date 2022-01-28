@@ -84,16 +84,16 @@ export default function Home({ JSONBooks, JSONAuthors, JSONEditors }) {
       </Head>
 
 
-      <header className='sticky top-0 mb-8.5 py-6 bg-white border-b border-green-light'>
+      <header className='stick top-0 mb-8.5 py-6 bg-white border-b border-green-light'>
         <h1 className='sr-only'>BookBox | Créé par Di Rosso - Thirion - Lagache</h1>
-        <nav className='max-w-base mx-auto px-4 flex items-center justify-between'>
+        <nav className='max-w-base mx-auto px-4 flex flex-col md:flex-row items-center justify-between'>
           <Link href='/'>
             <a>
               <span className='sr-only'>Accueil</span>
               <img
                 src='/logo.png'
                 alt='Logo BookBox'
-                className='w-40'
+                className='my-4 w-40'
               />
             </a>
           </Link>
@@ -112,29 +112,29 @@ export default function Home({ JSONBooks, JSONAuthors, JSONEditors }) {
               type='text'
               maxLength='64'
               placeholder='Recherche par titre ou auteur'
-              className='h-11 w-search pl-14 pr-4 border border-gray-light rounded-full text-green-dark placeholder:text-gray-dark'
+              className='h-11 md:w-search pl-14 pr-4 border border-gray-light rounded-full text-green-dark placeholder:text-gray-dark'
             />
           </label>
           <a
             href='https://github.com/hugolgc/library-airtable'
             target='_blank'
             rel='noreferrer'
-            className='px-4 py-2 bg-green rounded-full text-white font-medium'
+            className='hidden md:flex px-4 py-2 bg-green rounded-full text-white font-medium'
           >Github</a>
         </nav>
       </header>
 
 
-      <div className='max-w-base mx-auto px-4 flex'>
-        <aside className='w-36 flex-none mr-18'>
+      <div className='max-w-base mx-auto px-4 flex flex-col md:flex-row'>
+        <aside className='md:w-36 flex-none md:mr-18'>
           <h2 className='sr-only'>Liste des catégories</h2>
-          <ul className='space-y-8'>
+          <ul className='flex flex-row md:flex-col md:justify-center md:overflow-hidden overflow-x-scroll snap-x md:space-y-8 mb-8'>
             
             { categories.map((name, index) => <li key={ index }>
               <p
                 onClick={ () => setCategory(index) }
                 className={`
-                h-16 px-4 flex justify-center items-center rounded-2xl text-center cursor-pointer duration-150
+                h-20 md:h-16 px-4 w-32 md:w-auto flex snap-left justify-center items-center rounded-2xl text-center cursor-pointer duration-150
                 ${
                   index == category
                   ? 'bg-green-light text-green'
@@ -148,7 +148,7 @@ export default function Home({ JSONBooks, JSONAuthors, JSONEditors }) {
         <main className='flex-auto'>
           <h2 className='sr-only'>Liste des livres</h2>
           <form method='post'></form>
-          <ul className='grid grid-cols-5 gap-8.5 pb-10'>
+          <ul className='grid grid-cols-2 md:grid-cols-5 gap-8.5 pb-10'>
 
           { getBooks().slice(page * step, (page + 1) * step).map(
             book => book.fields.Cover ? <li key={ book.id }>
@@ -161,13 +161,11 @@ export default function Home({ JSONBooks, JSONAuthors, JSONEditors }) {
           )}
 
           </ul>
-
           { getBooks().length > step ?
-            <ul className='pb-10 flex justify-center items-center space-x-1 text-green-dark'>
+            <ul className='pb-10 flex flex-wrap justify-center  md:px-0 items-center space-x-1 text-green-dark'>
               { getPagination() }
             </ul> : ''
           }
-
         </main>
       </div>
 

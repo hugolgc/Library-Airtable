@@ -43,9 +43,9 @@ export default function Book({ JSONBook, JSONAuthor, JSONEditor }) {
 
       <header className='sticky top-0 mb-8.5 py-6 bg-white border-b border-green-light'>
         <h1 className='sr-only'>BookBox | Créé par Di Rosso - Thirion - Lagache</h1>
-        <nav className='max-w-base mx-auto px-4 flex items-center justify-between'>
+        <nav className='max-w-base mx-auto px-4 flex flex-col md:flex-row items-center justify-between'>
           <Link href='/'>
-            <a>
+            <a className='my-4 md:my-0'>
               <span className='sr-only'>Accueil</span>
               <img
                 src='/logo.png'
@@ -65,24 +65,24 @@ export default function Book({ JSONBook, JSONAuthor, JSONEditor }) {
               type='text'
               maxLength='64'
               placeholder='Recherche par titre ou auteur'
-              className='h-11 w-search pl-14 pr-4 border border-gray-light rounded-full text-green-dark placeholder:text-gray-dark'
+              className='h-11 md:w-search pl-14 pr-4 border border-gray-light rounded-full text-green-dark placeholder:text-gray-dark'
             />
           </label>
           <a
             href='https://github.com/hugolgc/library-airtable'
             target='_blank'
             rel='noreferrer'
-            className='px-4 py-2 bg-green rounded-full text-white font-medium'
+            className='hidden md:flex px-4 py-2 bg-green rounded-full text-white font-medium'
           >Github</a>
         </nav>
       </header>
 
 
       <article className='max-w-base mx-auto px-4'>
-        <div className='flex space-x-8'>
+        <div className='flex flex-col md:flex-row md:space-x-8'>
 
           { book.fields.Cover ?
-          <div className='w-20 flex-none space-y-5'>
+          <div className='hidden md:block w-20 flex-none space-y-5'>
             { book.fields.Cover.map(cover =>
               <img
                 key={ cover.id }
@@ -103,7 +103,7 @@ export default function Book({ JSONBook, JSONAuthor, JSONEditor }) {
           </div>
           <div className='flex-1 text-green-dark'>
             <div>
-              <h2 className='text-green-dark text-3xl font-medium'>{ book.fields.Titre }</h2>
+              <h2 className='text-green-dark text-3xl mt-4 font-medium'>{ book.fields.Titre }</h2>
               { author ? <h3 className='mt-2.5 text-gray-dark text-xl'>de { author.fields.Name }</h3> : '' }
               {/* <h3 className=''>$10.00</h3> */}
               <a href={ book.fields['Où le trouver'] } target="_blank" rel="noopener noreferrer" className='block w-full max-w-xs mt-12 p-3.5 bg-green text-center text-white text-lg font-medium rounded-full'>Trouver</a>
@@ -133,7 +133,7 @@ export default function Book({ JSONBook, JSONAuthor, JSONEditor }) {
             </div>
           </div>
         </div>
-        <div className='pb-12 w-1/2 pt-8.5 pl-28'>
+        <div className='pb-12 md:w-1/2 pt-8.5 md:pl-28'>
           <h3 className='text-2xl font-medium'>Description</h3>
           <p className='mt-4 text-gray-dark'>{ book.fields['Personal Notes'] }</p>
           {/* <p className='mt-2 text-green'>Voir plus</p> */}

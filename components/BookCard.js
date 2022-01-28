@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export default function BookCard({ book, author, editor }) {
   return (
-    <figure>
+    <figure className='flex flex-col w-auto '>
 
 
       <Link href={ '/book/' + book.id }>
